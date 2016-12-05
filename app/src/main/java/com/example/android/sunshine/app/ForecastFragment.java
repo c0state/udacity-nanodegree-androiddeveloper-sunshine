@@ -32,6 +32,8 @@ import java.util.ArrayList;
  * A fragment containing the weather forecast.
  */
 public class ForecastFragment extends Fragment {
+    private final String LOC_POSTAL_CODE = "10003,us";
+    private ArrayAdapter<String> forecastAdapter;
 
     public ForecastFragment() {
     }
@@ -47,23 +49,15 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        ArrayList<String> weekForecast = new ArrayList<>();
-        weekForecast.add("Today - Sunny - 9/3");
-        weekForecast.add("Tomorrow - Cloudy - 7/2");
-        weekForecast.add("Tuesday - Partly Cloudy - 8/1");
-        weekForecast.add("Wednesday - Partly Cloudy - 11/5");
-        weekForecast.add("Thursday - Rain - 7/3");
-        weekForecast.add("Friday - Light Rain - 9/4");
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        weatherTask.execute(LOC_POSTAL_CODE);
 
-        ArrayAdapter<String> forecastAdapter = new ArrayAdapter<String>(getActivity(),
+        forecastAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.list_item_forecast, R.id.list_item_forecast_textview,
-                weekForecast);
+                new ArrayList<String>());
 
         ListView forecastListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         forecastListView.setAdapter(forecastAdapter);
-
-        FetchWeatherTask weatherTask = new FetchWeatherTask();
-        weatherTask.execute("10003,us");
 
         return rootView;
     }
@@ -79,7 +73,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            new FetchWeatherTask().execute("10003,us");
+            new FetchWeatherTask().execute(LOC_POSTAL_CODE);
             return true;
         }
 
@@ -87,12 +81,6 @@ public class ForecastFragment extends Fragment {
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
-        private String LOG_TAG = null;
-
-        public FetchWeatherTask() {
-            LOG_TAG = this.getClass().getName();
-        }
-
         @Override
         protected String[] doInBackground(String... postalCodes) {
             HttpURLConnection urlConnection = null;
@@ -149,16 +137,13 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
 
-                Log.v("ForecastFragment", forecastJsonStr);
-
                 return getWeatherDataFromJson(forecastJsonStr, 7);
             } catch (IOException e) {
                 Log.e("ForecastFragment", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attemping
                 // to parse it.
-                return null;
             } catch (JSONException e) {
-                return null;
+                Log.e("ForecastFragment", "Error ", e);
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -171,6 +156,14 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] weekForecast) {
+            forecastAdapter.clear();
+            forecastAdapter.addAll(weekForecast);
         }
 
         /* The date/time conversion code is going to be moved outside the asynctask later,
@@ -265,9 +258,6 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
         }
     }
