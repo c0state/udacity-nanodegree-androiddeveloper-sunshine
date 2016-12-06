@@ -12,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +29,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import static android.R.attr.duration;
+import static android.R.attr.text;
 
 /**
  * A fragment containing the weather forecast.
@@ -58,6 +63,14 @@ public class ForecastFragment extends Fragment {
 
         ListView forecastListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         forecastListView.setAdapter(forecastAdapter);
+        forecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String weatherText = forecastAdapter.getItem(position).toString();
+                Toast.makeText(view.getContext(), weatherText, 3).show();
+            }
+
+        });
 
         return rootView;
     }
