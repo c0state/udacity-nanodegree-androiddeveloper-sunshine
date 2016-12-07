@@ -1,19 +1,14 @@
 package com.example.android.sunshine.app;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
+import java.util.Map;
+
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
@@ -22,10 +17,15 @@ public class SettingsActivity extends PreferenceActivity
         super.onCreate(savedInstanceState);
         // Add 'general' preferences, defined in the XML file
         // TODO: Add preferences from XML
+        addPreferencesFromResource(R.xml.pref_general);
 
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
-        // TODO: Add preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        for (Map.Entry<String,?> entry : prefs.getAll().entrySet()){
+            Preference pref = getPreferenceManager().findPreference(entry.getKey());
+            bindPreferenceSummaryToValue(pref);
+        }
     }
 
     /**
@@ -63,5 +63,4 @@ public class SettingsActivity extends PreferenceActivity
         }
         return true;
     }
-
 }
