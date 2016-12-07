@@ -41,6 +41,25 @@ public class ForecastFragment extends Fragment {
     public ForecastFragment() {
     }
 
+    private void refreshData() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        new FetchWeatherTask().execute(prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_default_display_name)));
+    }
+
+    private double convertTemperature(double temp) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String desiredUnits = prefs.getString(getString(R.string.pref_units_key),
+                getString(R.string.pref_units_default_value));
+        return (desiredUnits.equals("Metric")) ? temp : (temp*1.8)+32;
+    }
+
+    @Override
+    public void onStart() {
+        refreshData();
+        super.onStart();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -52,9 +71,7 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        final FetchWeatherTask weatherTask = new FetchWeatherTask();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        weatherTask.execute(prefs.getString(getString(R.string.pref_key), ""));
+        refreshData();
 
         forecastAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.list_item_forecast, R.id.list_item_forecast_textview,
@@ -88,8 +105,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-            new FetchWeatherTask().execute(prefs.getString(getString(R.string.pref_key), ""));
+            refreshData();
             return true;
         }
 
@@ -197,8 +213,8 @@ public class ForecastFragment extends Fragment {
          */
         private String formatHighLows(double high, double low) {
             // For presentation, assume the user doesn't care about tenths of a degree.
-            long roundedHigh = Math.round(high);
-            long roundedLow = Math.round(low);
+            long roundedHigh = Math.round(formatHighLows(high));
+            long roundedLow = Math.round(formatHighLows(low));
 
             String highLowStr = roundedHigh + "/" + roundedLow;
             return highLowStr;

@@ -2,11 +2,23 @@
     <EditTextPreference
         android:capitalize="words"
         android:defaultValue="@string/pref_default_display_name"
-        android:inputType="textCapWords"
-        android:key="@string/pref_key"
+        android:inputType="text"
+        android:key="@string/pref_location_key"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:summary="@string/pref_default_display_name"
         android:title="@string/pref_title_display_name" />
+    <ListPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_units_default_value"
+        android:inputType="text"
+        android:key="@string/pref_units_key"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/pref_units_default_value"
+        android:title="@string/pref_units_display_name"
+        android:entries="@array/units_entries"
+        android:entryValues="@array/units_entry_values" />
 </PreferenceScreen>

@@ -20,7 +20,10 @@
 
     <string name="pref_title_display_name">Location</string>
     <string name="pref_default_display_name">94025</string>
-    <string name="pref_key">location_text</string>
+    <string name="pref_units_display_name">Units</string>
+    <string name="pref_units_default_value">Metric</string>
+    <string name="pref_location_key">location_key</string>
+    <string name="pref_units_key">units_key</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
