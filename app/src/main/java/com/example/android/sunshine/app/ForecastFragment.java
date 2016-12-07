@@ -1,9 +1,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -34,7 +36,6 @@ import java.util.ArrayList;
  * A fragment containing the weather forecast.
  */
 public class ForecastFragment extends Fragment {
-    private final String LOC_POSTAL_CODE = "10003,us";
     private ArrayAdapter<String> forecastAdapter;
 
     public ForecastFragment() {
@@ -52,7 +53,8 @@ public class ForecastFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         final FetchWeatherTask weatherTask = new FetchWeatherTask();
-        weatherTask.execute(LOC_POSTAL_CODE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        weatherTask.execute(prefs.getString(getString(R.string.pref_key), ""));
 
         forecastAdapter = new ArrayAdapter<>(getActivity(),
                 R.layout.list_item_forecast, R.id.list_item_forecast_textview,
@@ -86,7 +88,8 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            new FetchWeatherTask().execute(LOC_POSTAL_CODE);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+            new FetchWeatherTask().execute(prefs.getString(getString(R.string.pref_key), ""));
             return true;
         }
 
