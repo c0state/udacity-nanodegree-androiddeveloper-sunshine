@@ -58,6 +58,23 @@ public class ForecastFragment extends Fragment {
         return (desiredUnits.equals("Metric")) ? temp : (temp*1.8)+32;
     }
 
+    private void mapLocationViaIntent() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String loc = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_default_display_name));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q=" + loc));
+        PackageManager packageManager = getContext().getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
+
+        if (activities.size() > 0) {
+            startActivity(mapIntent);
+        }
+        else {
+            Toast.makeText(getContext(), "Sorry, no mapping app is installed!", 3).show();
+        }
+    }
+
     @Override
     public void onStart() {
         refreshData();
@@ -114,21 +131,7 @@ public class ForecastFragment extends Fragment {
             return true;
         }
         else if (id == R.id.action_map) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-            String loc = prefs.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_default_display_name));
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("geo:0,0?q=" + loc));
-            PackageManager packageManager = getContext().getPackageManager();
-            List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
-
-            if (activities.size() > 0) {
-                startActivity(mapIntent);
-            }
-            else {
-                Toast.makeText(getContext(), "Sorry, no mapping app is installed!", 3).show();
-            }
-
+            mapLocationViaIntent();
             return true;
         }
 
