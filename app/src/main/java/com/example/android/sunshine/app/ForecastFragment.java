@@ -2,6 +2,8 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment containing the weather forecast.
@@ -97,6 +101,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.refresh, menu);
+        inflater.inflate(R.menu.map, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -106,6 +111,24 @@ public class ForecastFragment extends Fragment {
 
         if (id == R.id.action_refresh) {
             refreshData();
+            return true;
+        }
+        else if (id == R.id.action_map) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+            String loc = prefs.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_default_display_name));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("geo:0,0?q=" + loc));
+            PackageManager packageManager = getContext().getPackageManager();
+            List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
+
+            if (activities.size() > 0) {
+                startActivity(mapIntent);
+            }
+            else {
+                Toast.makeText(getContext(), "Sorry, no mapping app is installed!", 3).show();
+            }
+
             return true;
         }
 
