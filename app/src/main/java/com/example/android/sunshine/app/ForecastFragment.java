@@ -1,9 +1,9 @@
 package com.example.android.sunshine.app;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,7 +34,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A fragment containing the weather forecast.
@@ -65,9 +64,8 @@ public class ForecastFragment extends Fragment {
         Intent mapIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("geo:0,0?q=" + loc));
         PackageManager packageManager = getContext().getPackageManager();
-        List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
 
-        if (activities.size() > 0) {
+        if (mapIntent.resolveActivity(packageManager) != null) {
             startActivity(mapIntent);
         }
         else {
