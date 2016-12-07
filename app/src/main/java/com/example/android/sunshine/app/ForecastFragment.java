@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,9 +31,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static android.R.attr.duration;
-import static android.R.attr.text;
-
 /**
  * A fragment containing the weather forecast.
  */
@@ -52,9 +50,9 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        final FetchWeatherTask weatherTask = new FetchWeatherTask();
         weatherTask.execute(LOC_POSTAL_CODE);
 
         forecastAdapter = new ArrayAdapter<>(getActivity(),
@@ -67,7 +65,10 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String weatherText = forecastAdapter.getItem(position).toString();
-                Toast.makeText(view.getContext(), weatherText, 3).show();
+                Intent detailForecastIntent = new Intent(
+                        view.getContext(), DetailActivity.class)
+                        .putExtra(DetailActivity.FORECAST_TEXT, weatherText);
+                startActivity(detailForecastIntent);
             }
 
         });
