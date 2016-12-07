@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,10 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
-    public static final String FORECAST_TEXT = "FORECAST_TEXT ";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +25,7 @@ public class DetailActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.detail, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
 
@@ -38,6 +38,9 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(
+                    getBaseContext(), SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
 
@@ -45,6 +48,8 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     public static class PlaceholderFragment extends Fragment {
+        public static final String FORECAST_TEXT = "FORECAST_TEXT";
+
         public PlaceholderFragment() {
         }
 
@@ -53,6 +58,9 @@ public class DetailActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            TextView forecastText = (TextView)rootView.findViewById(
+                    R.id.detail_forecasttext);
+            forecastText.setText(getActivity().getIntent().getStringExtra(FORECAST_TEXT));
             return rootView;
         }
     }

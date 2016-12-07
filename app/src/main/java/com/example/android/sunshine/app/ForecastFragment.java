@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,10 +66,10 @@ public class ForecastFragment extends Fragment {
                 String weatherText = forecastAdapter.getItem(position).toString();
                 Intent detailForecastIntent = new Intent(
                         view.getContext(), DetailActivity.class)
-                        .putExtra(DetailActivity.FORECAST_TEXT, weatherText);
+                        .putExtra(DetailActivity.PlaceholderFragment.FORECAST_TEXT,
+                                weatherText);
                 startActivity(detailForecastIntent);
             }
-
         });
 
         return rootView;
@@ -78,7 +77,7 @@ public class ForecastFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.forecastfragment, menu);
+        inflater.inflate(R.menu.refresh, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
