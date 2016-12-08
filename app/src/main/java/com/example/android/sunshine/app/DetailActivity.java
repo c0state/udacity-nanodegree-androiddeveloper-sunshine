@@ -3,13 +3,17 @@ package com.example.android.sunshine.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import static com.example.android.sunshine.app.R.id.container;
 
 public class DetailActivity extends ActionBarActivity {
     @Override
@@ -18,7 +22,7 @@ public class DetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(container, new PlaceholderFragment())
                     .commit();
         }
     }
@@ -26,6 +30,7 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings, menu);
+        getMenuInflater().inflate(R.menu.share, menu);
         return true;
     }
 
@@ -41,6 +46,19 @@ public class DetailActivity extends ActionBarActivity {
             Intent settingsIntent = new Intent(
                     getBaseContext(), SettingsActivity.class);
             startActivity(settingsIntent);
+            return true;
+        }
+        else if (id == R.id.action_share) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+
+            TextView forecastText = (TextView)findViewById(R.id.detail_forecasttext);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, forecastText.getText() + " #SunshineApp");
+
+            ShareActionProvider shareActionProvider = (ShareActionProvider)MenuItemCompat.getActionProvider(item);
+            if (shareActionProvider != null) {
+                shareActionProvider.setShareIntent(shareIntent);
+            }
             return true;
         }
 
