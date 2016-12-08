@@ -31,6 +31,17 @@ public class DetailActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings, menu);
         getMenuInflater().inflate(R.menu.share, menu);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        TextView forecastText = (TextView)findViewById(R.id.detail_forecasttext);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, forecastText.getText() + " #SunshineApp");
+
+        MenuItem item = menu.findItem(R.id.action_share);
+        ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        if (shareActionProvider != null) {
+            shareActionProvider.setShareIntent(shareIntent);
+        }
         return true;
     }
 
@@ -49,16 +60,6 @@ public class DetailActivity extends ActionBarActivity {
             return true;
         }
         else if (id == R.id.action_share) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-
-            TextView forecastText = (TextView)findViewById(R.id.detail_forecasttext);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, forecastText.getText() + " #SunshineApp");
-
-            ShareActionProvider shareActionProvider = (ShareActionProvider)MenuItemCompat.getActionProvider(item);
-            if (shareActionProvider != null) {
-                shareActionProvider.setShareIntent(shareIntent);
-            }
             return true;
         }
 
