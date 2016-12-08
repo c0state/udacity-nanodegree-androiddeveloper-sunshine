@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,18 +31,6 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings, menu);
-        getMenuInflater().inflate(R.menu.share, menu);
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-
-        TextView forecastText = (TextView)findViewById(R.id.detail_forecasttext);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, forecastText.getText() + " #SunshineApp");
-
-        MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        if (shareActionProvider != null) {
-            shareActionProvider.setShareIntent(shareIntent);
-        }
         return true;
     }
 
@@ -52,10 +41,8 @@ public class DetailActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(
-                    getBaseContext(), SettingsActivity.class);
+            Intent settingsIntent = new Intent(getBaseContext(), SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
         }
@@ -68,8 +55,35 @@ public class DetailActivity extends ActionBarActivity {
 
     public static class PlaceholderFragment extends Fragment {
         public static final String FORECAST_TEXT = "FORECAST_TEXT";
+        private String SHARE_HASHTAG = "#SunshineApp";
 
         public PlaceholderFragment() {
+            setHasOptionsMenu(true);
+        }
+
+        private Intent createShareWeatherIntent() {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            return shareIntent;
+        }
+
+        private String getShareWeatherText() {
+            TextView forecastText = (TextView)getActivity().findViewById(R.id.detail_forecasttext);
+            return forecastText.getText() + " " + SHARE_HASHTAG;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.share, menu);
+            MenuItem item = menu.findItem(R.id.action_share);
+            ShareActionProvider shareActionProvider = (ShareActionProvider)MenuItemCompat.getActionProvider(item);
+            Intent shareIntent = createShareWeatherIntent();
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getShareWeatherText());
+            if (shareActionProvider != null) {
+                shareActionProvider.setShareIntent(shareIntent);
+            }
+            super.onCreateOptionsMenu(menu, inflater);
         }
 
         @Override
