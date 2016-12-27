@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.example.android.sunshine.app.R.id.container;
 
@@ -64,7 +65,7 @@ public class DetailActivity extends ActionBarActivity {
         private Intent createShareWeatherIntent() {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             return shareIntent;
         }
 
@@ -82,6 +83,10 @@ public class DetailActivity extends ActionBarActivity {
             shareIntent.putExtra(Intent.EXTRA_TEXT, getShareWeatherText());
             if (shareActionProvider != null) {
                 shareActionProvider.setShareIntent(shareIntent);
+            }
+            else {
+                Toast.makeText(getContext(), "Could not find apps to share weather with!", 3).show();
+
             }
             super.onCreateOptionsMenu(menu, inflater);
         }

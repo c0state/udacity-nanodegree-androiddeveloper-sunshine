@@ -21,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +55,7 @@ public class ForecastFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         String desiredUnits = prefs.getString(getString(R.string.pref_units_key),
                 getString(R.string.pref_units_default_value));
-        return (desiredUnits.equals("Metric")) ? temp : (temp*1.8)+32;
+        return (desiredUnits.equals(getString(R.string.pref_units_default_value))) ? temp : (temp*1.8)+32;
     }
 
     private void mapLocationViaIntent() {
@@ -146,7 +148,7 @@ public class ForecastFragment extends Fragment {
 
             try {
                 // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
+                // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("http")
@@ -194,11 +196,9 @@ public class ForecastFragment extends Fragment {
 
                 return getWeatherDataFromJson(forecastJsonStr, 7);
             } catch (IOException e) {
-                Log.e("ForecastFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
+                Logger.e(e, "I/O Error querying for forecast");
             } catch (JSONException e) {
-                Log.e("ForecastFragment", "Error ", e);
+                Logger.e(e, "JSON error while querying for forecast");
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -207,7 +207,7 @@ public class ForecastFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e("ForecastFragment", "Error closing stream", e);
+                        Logger.e(e, "Error closing stream");
                     }
                 }
             }
